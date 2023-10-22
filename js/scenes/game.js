@@ -1,5 +1,6 @@
 // Import Gameobjects
-import Player from "../objetcs/player.js";
+import Player from "../objects/player.js";
+import Crab from "../objects/crab.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -25,11 +26,17 @@ export default class Game extends Phaser.Scene {
                 0,
                 0
             ),
+            functions: this.map.getObjectLayer('functions')
         };
 
         // Add Sprites
         // Player
         this.player = new Player(this, 50, 0, "player");
+
+        // Tile Objects
+        this.layers.functions.objects.forEach((obj) => {
+            
+        })
 
         // Physics
         // Tilemap Physics
@@ -82,11 +89,18 @@ export default class Game extends Phaser.Scene {
             right: "D",
         });
 
-        // // Camera
+        // Camera
+        this.cameras.main.setBounds(0, 0, this.width, this.height, true);
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.zoom = 2;
+        this.cameras.main.zoom = 4;
+        this.cameras.main.setLerp(1, 0);
+
+        // Add world bounds
+        this.matter.world.setBounds(0, 0, this.scale.width, this.scale.height);
 
         // Misc Variables
+
+        // Debug
     }
 
     update() {
@@ -112,7 +126,7 @@ export default class Game extends Phaser.Scene {
         this.keys.jump.on("down", () => {
             if (this.playerOnGround) {
                 this.player.anims.play("jump", true);
-                this.player.setVelocity(0, -10);
+                this.player.setVelocity(0, -7);
                 this.playerOnGround = false;
             }
         });
