@@ -51,7 +51,7 @@ export default class Game extends Phaser.Scene {
             render: {
                 sprite: {
                     xOffset: 0,
-                    yOffset: 0.1,
+                    yOffset: 0.2,
                 },
             },
         });
@@ -68,7 +68,7 @@ export default class Game extends Phaser.Scene {
                 render: {
                     sprite: {
                         xOffset: 0,
-                        yOffset: 0.1,
+                        yOffset: 0.2,
                     },
                 },
             });
@@ -121,7 +121,7 @@ export default class Game extends Phaser.Scene {
                     e.pairs.some(
                         (pair) =>
                             pair.bodyA.label == "player" &&
-                            pair.bodyB.label == enemy.data.list[1].value + id
+                            pair.bodyB.label == enemy.name
                     )
                 ) {
                     if (this.player.y < enemy.y - enemy.height / 2) {

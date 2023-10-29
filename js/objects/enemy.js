@@ -3,6 +3,7 @@ export default class Enemy extends Phaser.Physics.Matter.Sprite {
         super(scene.matter.world, x, y, name, frame, options);
         scene.add.existing(this);
         this.body.label = label;
+        this.name = label;
 
         scene.anims.create({
             key: 'walk',
