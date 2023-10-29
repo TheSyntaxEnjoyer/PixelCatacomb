@@ -1,6 +1,6 @@
 // Import Gameobjects
 import Player from "../objects/player.js";
-import Crab from "../objects/crab.js";
+import Enemy from "../objects/enemy.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -26,17 +26,55 @@ export default class Game extends Phaser.Scene {
                 0,
                 0
             ),
-            functions: this.map.getObjectLayer('functions')
+            functions: this.map.getObjectLayer("functions"),
         };
 
         // Add Sprites
+        // Sprite Shapes
+        this.shapes = {
+            player: [
+                { x: 14, y: 53 },
+                { x: 14, y: 64 },
+                { x: 2, y: 64 },
+                { x: 2, y: 53 },
+            ],
+            enemy: [
+                { x: 14, y: 53 },
+                { x: 14, y: 64 },
+                { x: 2, y: 64 },
+                { x: 2, y: 53 },
+            ],
+        };
         // Player
-        this.player = new Player(this, 50, 0, "player");
+        this.player = new Player(this, 40, 0, "player", {
+            shape: { type: "fromVerts", verts: this.shapes.player },
+            render: {
+                sprite: {
+                    xOffset: 0,
+                    yOffset: 0.1,
+                },
+            },
+        });
 
         // Tile Objects
-        this.layers.functions.objects.forEach((obj) => {
-            
-        })
+        // Create group for enemies
+        this.enemies = this.add.group();
+        this.layers.functions.objects.forEach((obj, id) => {
+            // Enemy(scene, x, y, label, name, options, frame)
+            // The `obj.properties[1].value + id` will be the one we will look for in collisions, aka "label".
+            // While the name will be the reference for the sprite's image key.
+            let e = new Enemy(this, obj.x, obj.y, obj.properties[1].value + id, obj.properties[1].value, {
+                shape: { type: "fromVerts", verts: this.shapes.enemy },
+                render: {
+                    sprite: {
+                        xOffset: 0,
+                        yOffset: 0.1,
+                    },
+                },
+            });
+            e.setData(obj.properties);
+            this.enemies.add(e);
+        });
 
         // Physics
         // Tilemap Physics
@@ -74,11 +112,26 @@ export default class Game extends Phaser.Scene {
                         pair.bodyB.label == "obstacles"
                 )
             ) {
-                this.scene.pause();
-                setTimeout(() => {
-                    this.scene.start("game-over");
-                }, 1000);
+                this.gameover();
             }
+
+            // Check if player touches an enemy
+            this.enemies.children.entries.forEach((enemy, id) => {
+                if (
+                    e.pairs.some(
+                        (pair) =>
+                            pair.bodyA.label == "player" &&
+                            pair.bodyB.label == enemy.data.list[1].value + id
+                    )
+                ) {
+                    if (this.player.y < enemy.y - enemy.height / 2) {
+                        this.player.setVelocity(0, -7);
+                        enemy.destroy();
+                    } else {
+                        this.gameover();
+                    }
+                }
+            });
         });
 
         // Misc
@@ -101,10 +154,18 @@ export default class Game extends Phaser.Scene {
         // Misc Variables
 
         // Debug
+        console.log(
+            this.enemies.children.entries[0]
+        );
     }
 
     update() {
+        // Misc variables that need to be updated every tick
         this.player.setRotation(0);
+        this.enemies.children.entries.forEach((e) => {
+            e.setRotation(0);
+        });
+
         // Movement
         if (this.keys.right.isDown) {
             this.player.flipX = false;
@@ -130,5 +191,12 @@ export default class Game extends Phaser.Scene {
                 this.playerOnGround = false;
             }
         });
+    }
+
+    gameover() {
+        this.scene.pause();
+        setTimeout(() => {
+            this.scene.start("game-over");
+        }, 1000);
     }
 }

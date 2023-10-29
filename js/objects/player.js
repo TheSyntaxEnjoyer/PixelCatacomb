@@ -1,5 +1,5 @@
 export default class Player extends Phaser.Physics.Matter.Sprite {
-    constructor(scene, x, y, key, frame, options) {
+    constructor(scene, x, y, key, options, frame) {
         super(scene.matter.world, x, y, key, frame, options);
         scene.add.existing(this);
         this.body.label = 'player';

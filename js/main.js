@@ -10,7 +10,7 @@ export default new Phaser.Game({
     physics: {
         default: "matter",
         matter: {
-            debug: false
+            debug: true
         },
     },
     pixelArt: true,

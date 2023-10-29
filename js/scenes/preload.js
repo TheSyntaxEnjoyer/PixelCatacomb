@@ -33,7 +33,7 @@ export default class Preload extends Phaser.Scene {
         // atlas & json
         this.load.json(
             "player_shapes",
-            "./assets/gfx/spritesheets/player.atlas.json"
+            "./assets/data/physics/player_shapes.json"
         );
 
         // sfx
